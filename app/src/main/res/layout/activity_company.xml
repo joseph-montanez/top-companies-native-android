@@ -1,0 +1,291 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff"
+    tools:context="com.comentum.topcompanies.topcompanies.CompanyActivity"
+    >
+
+    <include layout="@layout/include_header"/>
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listCompanyImageGroup"
+                android:visibility="visible">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/listCompanyImage"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/comentum_logo"
+                android:layout_marginTop="20dp" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:id="@+id/separator4"
+                    android:visibility="visible"
+                    android:background="#ffd9d9d9"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Agency.com LLC"
+                android:id="@+id/listCompanyName"
+                android:textColor="#ff0099cc"
+                android:textSize="20sp"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="488 Madison Ave., 4th Fl."
+                android:id="@+id/listCompanyAddress"
+                android:textColor="#ff4C5356"
+                android:textSize="16sp"
+                android:gravity="center_horizontal"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="New York, NY 10022"
+                android:id="@+id/listCompanyCityStateZip"
+                android:textColor="#ff4C5356"
+                android:textSize="16sp"
+                android:gravity="center_horizontal"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="http://www.angency.com"
+                android:id="@+id/listCompanyWebsite"
+                android:textColor="#ff4C5356"
+                android:textSize="16sp"
+                android:gravity="center_horizontal"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="(222) 358-2600"
+                android:id="@+id/listCompanyPhone"
+                android:textColor="#ff4C5356"
+                android:textSize="16sp"
+                android:gravity="center_horizontal"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:id="@+id/separator2"
+                android:visibility="visible"
+                android:background="#ffd9d9d9"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listCompanyOverviewGroup"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Overview"
+                        android:id="@+id/listCompanyNameOverviewTitle"
+                        android:layout_row="1"
+                        android:layout_column="0"
+                        android:textColor="#ff0099cc"
+                        android:textSize="20sp"
+                        android:gravity="center_horizontal"
+                        android:layout_marginBottom="4dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="International Business Machines Corporation (IBM) is an information technology (IT) company. It operates under five segments: Global Technology Services (GTS), Global Business Services (GBS), Software, Systems and Technology, and Global Financing. GTS primarily provides IT infrastructure services and business process services. GBS primarily provides professional services and application management services. IBM s Software segment consists primarily of middleware and operating systems software. IBM provides clients with business solutions requiring advanced computing power and storage capabilities. Global Financing invests in financing assets and leverages with debt. During the year ended December 31, 2010, IBM acquired Intelliden Inc., National Interest Security Company, LLC, Cast Iron Systems, BigFix, Inc., Datacap Inc., Clarity Systems, BLADE Network Technologies, Netezza Corporation, Lombardi and Unica Corporation. In April 2011, it acquired TRIRIGA, Inc."
+                        android:id="@+id/listCompanyNameOverview"
+                        android:layout_row="4"
+                        android:layout_column="0"
+                        android:textColor="#ff4C5356"
+                        android:textSize="16sp"
+                        android:gravity="center_horizontal"/>
+
+                    <View
+                        android:layout_width="fill_parent"
+                        android:layout_height="1dp"
+                        android:id="@+id/separator5"
+                        android:visibility="visible"
+                        android:background="#ffd9d9d9"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="15dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listCompanyDescriptionGroup"
+                android:visibility="visible">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Digitaria is a full service digital agency made up of visionary online marketing strategists, web technologists and creative website designers from around the world."
+                    android:id="@+id/listCompanyDescription"
+                    android:layout_row="2"
+                    android:layout_column="0"
+                    android:textColor="#ff4C5356"
+                    android:textSize="12sp"
+                    android:gravity="center_horizontal"/>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:id="@+id/separator3"
+                    android:visibility="visible"
+                    android:background="#ffd9d9d9"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/listCompanyBusinessInformationGroup"
+                android:visibility="visible">
+                <!--
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Digitaria is a full service digital agency made up of visionary online marketing strategists, web technologists and creative website designers from around the world."
+                    android:id="@+id/listCompanyDescription"
+                    android:layout_row="2"
+                    android:layout_column="0"
+                    android:textColor="#ff4C5356"
+                    android:textSize="12sp"
+                    android:gravity="center_horizontal"/>
+                -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Business Information"
+                    android:id="@+id/listCompanyBusinessInformationTitle"
+                    android:layout_row="1"
+                    android:layout_column="0"
+                    android:textColor="#ff0099cc"
+                    android:textSize="20sp"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="4dp" />
+
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_gravity="center_horizontal">
+                    <TableRow
+                        android:id="@+id/listCompanyFoundedGroup"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+
+                        <TextView
+                            android:id="@+id/listCompanyFoundedTitle"
+                            android:text="Year Established:"
+                            android:textColor="#ff333333"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:padding="4dp" />
+
+                        <TextView
+                            android:id="@+id/listCompanyFounded"
+                            android:textColor="#ff333333"
+                            android:textSize="16sp"
+                            android:text="2014"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:padding="4dp" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/listCompanyRevenueGroup"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+
+                        <TextView
+                            android:id="@+id/listCompanyRevenueTitle"
+                            android:text="Annual Revenue:"
+                            android:textColor="#ff333333"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:padding="4dp" />
+
+                        <TextView
+                            android:id="@+id/listCompanyRevenue"
+                            android:textColor="#ff333333"
+                            android:textSize="16sp"
+                            android:text="$2,000,000"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:padding="4dp" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/listCompanyEmployeeGroup"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+
+                        <TextView
+                            android:id="@+id/listCompanyEmployeeTitle"
+                            android:text="No. Employees:"
+                            android:textColor="#ff333333"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:padding="4dp" />
+
+                        <TextView
+                            android:id="@+id/listCompanyEmployee"
+                            android:textColor="#ff333333"
+                            android:textSize="16sp"
+                            android:text="200 - 300"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:padding="4dp" />
+
+                    </TableRow>
+                </TableLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:id="@+id/separator6"
+                    android:visibility="visible"
+                    android:background="#ffd9d9d9"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="15dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

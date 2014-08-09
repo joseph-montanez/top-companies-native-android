@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".SearchActivity"
+    android:background="#ff333333">
+
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo_top_companies"
+            android:layout_margin="30dp"
+            android:contentDescription="Top Companies Logo" />
+
+    <com.comentum.topcompanies.topcompanies.CompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/keywordTxt"
+        android:layout_gravity="center_horizontal"
+        android:background="#ffffffff"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:height="40dp"
+        android:hint="Enter Keyword"
+        android:textCursorDrawable="@null"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="10dp"
+        android:textSize="16dp"
+        android:completionThreshold="3"
+        android:focusable="true"
+        android:textColor="#ff333333" />
+</LinearLayout>

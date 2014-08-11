@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -64,13 +65,12 @@ public class CompanyArrayAdapter extends ArrayAdapter<Company> {
                 //-- start activity
                 JSONObject transport = activity.transport;
 //                activity.transport
-//                try {
-//                    transport.put("label", label.toJson());
-//                    transport.put("typed", autoCompView.getTyped());
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-                String payload =  activity.transport.toString();
+                try {
+                    transport.put("companies_id", c.id);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String payload =  transport.toString();
                 Intent intent = new Intent(context, CompanyActivity.class);
                 intent.putExtra("payload", payload);
                 context.startActivity(intent);

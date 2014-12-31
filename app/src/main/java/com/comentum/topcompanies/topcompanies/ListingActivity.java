@@ -100,11 +100,15 @@ public class ListingActivity extends Activity {
 
         try {
             transport = new JSONObject(payload);
-            JSONObject label = transport.getJSONObject("label");
-            listHeading.setText(label.getString("label"));
+            SearchItem item = new SearchItem();
+            JSONObject jsonItem = transport.optJSONObject("item");
+            if (jsonItem != null) {
+                item.fromJson(jsonItem);
+            }
+            listHeading.setText(item.getName());
             StringBuilder sb = new StringBuilder("http://hawk2.comentum.com/topcompanies/app-api/ajax-listing.php");
             sb.append("?companies=true");
-            sb.append("&keywords_id=" + URLEncoder.encode(label.getString("value"), "utf8"));
+            sb.append("&keywords_id=" + URLEncoder.encode(item.getId(), "utf8"));
             (new AsyncListViewLoader()).execute(sb.toString());
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

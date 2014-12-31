@@ -18,25 +18,42 @@
             android:layout_margin="30dp"
             android:contentDescription="Top Companies Logo" />
 
-    <com.comentum.topcompanies.topcompanies.CompleteTextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/keywordTxt"
+    <RelativeLayout
+        android:layout_width="319dp"
+        android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
-        android:background="#ffffffff"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:height="40dp"
-        android:hint="Enter Keyword"
-        android:textCursorDrawable="@null"
-        android:paddingBottom="10dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:paddingTop="10dp"
-        android:textSize="16dp"
-        android:completionThreshold="3"
-        android:focusable="true"
-        android:textColor="#ff333333" />
+        android:background="#ffffffff">
+
+        <com.comentum.topcompanies.topcompanies.CompleteTextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/keywordTxt"
+            android:layout_gravity="center_horizontal"
+            android:background="#ffffffff"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:height="40dp"
+            android:hint="@string/keywordHint"
+            android:textCursorDrawable="@null"
+            android:textSize="16sp"
+            android:completionThreshold="3"
+            android:focusable="true"
+            android:textColor="#ff333333"
+            android:layout_centerVertical="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="64dp"
+            android:layout_height="32dp"
+            android:id="@+id/loadingIndicator"
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/keywordTxt"
+            android:indeterminate="true"
+            android:max="100"
+            android:progress="75" />
+    </RelativeLayout>
+
 </LinearLayout>

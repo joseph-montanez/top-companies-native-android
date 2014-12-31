@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_listing">ListingActivity</string>
     <string name="title_activity_company">CompanyActivity</string>
+    <string name="keywordHint">Enter Keyword (At Least 3 Letters)</string>
 
 </resources>

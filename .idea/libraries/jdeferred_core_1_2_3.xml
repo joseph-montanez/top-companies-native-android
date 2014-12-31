@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jdeferred-core-1.2.3">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jdeferred/jdeferred-core/1.2.3/f6723c14355ab64c62a4460fbc74a44fe017ad2c/jdeferred-core-1.2.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jdeferred/jdeferred-core/1.2.3/2ec00a92c91c7d65196bdeb4789ac6f4c6551e8f/jdeferred-core-1.2.3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

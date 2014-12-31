@@ -17,22 +17,30 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="150dp"
                 android:id="@+id/listCompanyImageGroup"
                 android:visibility="visible">
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/listCompanyImage"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/comentum_logo"
-                android:layout_marginTop="20dp" />
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/listCompanyImage"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/backdrop_76945379"
+                    android:layout_margin="0dp"
+                    android:scaleType="centerCrop" />
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/listCompanyImageOverlay"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/gradient_shape"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="-150dp" />
 
                 <View
                     android:layout_width="fill_parent"
@@ -44,6 +52,11 @@
                     android:layout_marginBottom="15dp" />
             </LinearLayout>
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -284,6 +297,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="15dp" />
             </LinearLayout>
+        </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

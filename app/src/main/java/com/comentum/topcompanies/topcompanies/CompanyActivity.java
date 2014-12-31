@@ -45,20 +45,26 @@ public class CompanyActivity extends Activity {
 
         final TextView listHeading = (TextView) findViewById(R.id.listHeading);
 
+        final ImageView listCompanyImage = (ImageView) findViewById(R.id.listCompanyImage);
+        Backdrop bd = new Backdrop();
+        listCompanyImage.setImageResource(bd.getRandomImage());
+
         //-- Load Company
         Bundle extras = getIntent().getExtras();
         String payload = extras.getString("payload");
         Log.i("payload", payload);
+        //{"companies_id":1176,"typed":"web","item":{"id":"402","type":"Category","name":"Web Design - Corporate"}}
 
         try {
             transport = new JSONObject(payload);
-            JSONObject label = transport.getJSONObject("label");
-            String companies_id = transport.getString("companies_id");
-            listHeading.setText(label.getString("label"));
+            JSONObject item = transport.getJSONObject("item");
+            String companies_id = transport.optString("companies_id", "0");
+            listHeading.setText(item.optString("name", ""));
             StringBuilder sb = new StringBuilder("http://hawk2.comentum.com/topcompanies/app-api/ajax-details.php");
             sb.append("?companies_id=" + URLEncoder.encode(companies_id, "utf8"));
             (new AsyncCompanyLoader()).execute(sb.toString());
         } catch (UnsupportedEncodingException e) {
+            // Its hitting this point
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();

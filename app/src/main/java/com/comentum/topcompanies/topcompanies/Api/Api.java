@@ -27,12 +27,6 @@ public class Api {
         RequestParams params = new RequestParams();
         params.add("term", value);
 
-
-        if (apiUrl == null) {
-            deferred.reject(null);
-            return deferred.promise();
-        }
-
         Promise result = null;
         try {
             result = Client.getJsonDeferred(apiUrl, params);
@@ -49,6 +43,42 @@ public class Api {
             public void onDone(JSONArray items) {
                 List<SearchItem> searchItems = itemsToSearchItems(items);
                 deferred.resolve(searchItems);
+            }
+        });
+
+        result.fail(new FailCallback() {
+            @Override
+            public void onFail(Object result) {
+                deferred.reject(null);
+            }
+        });
+
+        return deferred.promise();
+    }
+
+    public Promise detail(String companyId) {
+        final DeferredObject deferred = new DeferredObject();
+
+        String apiUrl = "ajax-details.php";
+        RequestParams params = new RequestParams();
+        params.add("companies_id", companyId);
+
+        Promise result = null;
+        try {
+            result = Client.getJsonDeferred(apiUrl, params);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (result == null) {
+            deferred.reject(null);
+        }
+
+        result.done(new DoneCallback<JSONArray>() {
+            @Override
+            public void onDone(JSONArray items) {
+//                List<SearchItem> searchItems = itemsToSearchItems(items);
+//                deferred.resolve(searchItems);
             }
         });
 

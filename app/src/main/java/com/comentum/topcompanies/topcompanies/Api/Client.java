@@ -42,13 +42,15 @@ public class Client {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Client", "onSuccess - JSONObject");
-                // If the response is JSONObject instead of expected JSONArray
-                boolean success = response.optBoolean("success", false);
-                if (success) {
-                    deferred.resolve(response);
-                } else {
-                    deferred.reject(null);
-                }
+
+                deferred.resolve(response);
+//                // If the response is JSONObject instead of expected JSONArray
+//                boolean success = response.optBoolean("success", false);
+//                if (success) {
+//                    deferred.resolve(response);
+//                } else {
+//                    deferred.reject(null);
+//                }
             }
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {

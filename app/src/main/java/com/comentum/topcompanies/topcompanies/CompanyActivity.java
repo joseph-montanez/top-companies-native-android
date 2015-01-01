@@ -10,8 +10,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.comentum.topcompanies.topcompanies.Api.Api;
+
+import org.jdeferred.DoneCallback;
+import org.jdeferred.FailCallback;
+import org.jdeferred.Promise;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,8 +36,78 @@ public class CompanyActivity extends Activity {
     protected String LOG_TAG = "TopCompanies";
     public JSONObject transport;
 
+    // UI Elements
+    private LinearLayout listCompanyDetails;
+
+    private TextView listCompanyName;
+    private TextView listCompanyAddress;
+    private TextView listCompanyCityStateZip;
+    private TextView listCompanyWebsite;
+    private TextView listCompanyPhone;
+
+    private LinearLayout listCompanyOverviewGroup;
+    private TextView listCompanyNameOverview;
+
+    private LinearLayout listCompanyDescriptionGroup;
+    private TextView listCompanyDescription;
+
+    private LinearLayout listCompanyBusinessInformationGroup;
+
+    private TableRow listCompanyFoundedGroup;
+    private TextView listCompanyFounded;
+    private TableRow listCompanyRevenueGroup;
+    private TextView listCompanyRevenue;
+    private TableRow listCompanyEmployeeGroup;
+    private TextView listCompanyEmployee;
+
+    private class Payload {
+        private Integer companiesId;
+        private String typed;
+        private SearchItem item;
+
+        public Integer getCompaniesId() {
+            return companiesId;
+        }
+
+        public void setCompaniesId(Integer companiesId) {
+            this.companiesId = companiesId;
+        }
+
+        public String getTyped() {
+            return typed;
+        }
+
+        public void setTyped(String typed) {
+            this.typed = typed;
+        }
+
+        public SearchItem getItem() {
+            return item;
+        }
+
+        public void setItem(SearchItem item) {
+            this.item = item;
+        }
+
+        public void fromJson(JSONObject transport) {
+            setCompaniesId(transport.optInt("companies_id", 0));
+            setTyped(transport.optString("typed", ""));
+            SearchItem item = new SearchItem();
+            JSONObject itemJson = transport.optJSONObject("item");
+            if (itemJson != null) {
+                item.fromJson(itemJson);
+            }
+            setItem(item);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Bundle extras;
+        String payloadData;
+        Payload payload;
+        Api api;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company);
 
@@ -49,27 +126,38 @@ public class CompanyActivity extends Activity {
         Backdrop bd = new Backdrop();
         listCompanyImage.setImageResource(bd.getRandomImage());
 
+        setUpViewElements();
+        listCompanyDetails.setVisibility(View.INVISIBLE);
+
         //-- Load Company
-        Bundle extras = getIntent().getExtras();
-        String payload = extras.getString("payload");
-        Log.i("payload", payload);
-        //{"companies_id":1176,"typed":"web","item":{"id":"402","type":"Category","name":"Web Design - Corporate"}}
+        extras = getIntent().getExtras();
+        api = new Api();
+        payload = new Payload();
+        payloadData = extras.getString("payload");
 
         try {
-            transport = new JSONObject(payload);
-            JSONObject item = transport.getJSONObject("item");
-            String companies_id = transport.optString("companies_id", "0");
-            listHeading.setText(item.optString("name", ""));
-            StringBuilder sb = new StringBuilder("http://hawk2.comentum.com/topcompanies/app-api/ajax-details.php");
-            sb.append("?companies_id=" + URLEncoder.encode(companies_id, "utf8"));
-            (new AsyncCompanyLoader()).execute(sb.toString());
-        } catch (UnsupportedEncodingException e) {
-            // Its hitting this point
-            e.printStackTrace();
-        } catch (JSONException e) {
+            transport = new JSONObject(payloadData);
+            payload.fromJson(transport);
+            listHeading.setText(payload.getItem().getName());
+            Promise p1 = api.detail(payload.getCompaniesId());
+            p1.then(new DoneCallback<Company>() {
+                @Override
+                public void onDone(Company company) {
+                    renderCompany(company);
+                }
+            });
+            p1.fail(new FailCallback() {
+                @Override
+                public void onFail(Object result) {
+                    Log.d("CompanyActivity", "failed to load company");
+                }
+            });
+        }  catch (JSONException e) {
             e.printStackTrace();
         }
+
     }
+
     @Override
     public void onBackPressed() {
         overridePendingTransition(R.anim.push_left_to_right, R.anim.push_right_to_left);
@@ -101,67 +189,104 @@ public class CompanyActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class AsyncCompanyLoader extends AsyncTask<String, Void, Company> {
-        private final ProgressDialog dialog = new ProgressDialog(CompanyActivity.this);
+    public void setUpViewElements() {
+        listCompanyDetails = (LinearLayout) findViewById(R.id.listCompanyDetails);
 
-        @Override
-        protected void onPostExecute(final Company result) {
-            super.onPostExecute(result);
-            dialog.dismiss();
+        listCompanyName = (TextView) findViewById(R.id.listCompanyName);
+        listCompanyAddress = (TextView) findViewById(R.id.listCompanyAddress);
+        listCompanyCityStateZip = (TextView) findViewById(R.id.listCompanyCityStateZip);
+        listCompanyWebsite = (TextView) findViewById(R.id.listCompanyWebsite);
+        listCompanyPhone = (TextView) findViewById(R.id.listCompanyPhone);
 
-            //-- TODO: Bind company to data
+        listCompanyOverviewGroup = (LinearLayout) findViewById(R.id.listCompanyOverviewGroup);
+        listCompanyNameOverview = (TextView) findViewById(R.id.listCompanyNameOverview);
 
+        listCompanyDescriptionGroup = (LinearLayout) findViewById(R.id.listCompanyDescriptionGroup);
+        listCompanyDescription = (TextView) findViewById(R.id.listCompanyDescription);
+
+        listCompanyBusinessInformationGroup = (LinearLayout) findViewById(R.id.listCompanyBusinessInformationGroup);
+
+        listCompanyFoundedGroup = (TableRow) findViewById(R.id.listCompanyFoundedGroup);
+        listCompanyFounded = (TextView) findViewById(R.id.listCompanyFounded);
+        listCompanyRevenueGroup = (TableRow) findViewById(R.id.listCompanyRevenueGroup);
+        listCompanyRevenue = (TextView) findViewById(R.id.listCompanyRevenue);
+        listCompanyEmployeeGroup = (TableRow) findViewById(R.id.listCompanyEmployeeGroup);
+        listCompanyEmployee = (TextView) findViewById(R.id.listCompanyEmployee);
+    }
+
+    public void renderCompany(Company company) {
+        listCompanyName.setText(company.getName());
+
+        if (company.getAddress().isEmpty()) {
+            listCompanyAddress.setVisibility(View.GONE);
+        } else {
+            listCompanyAddress.setVisibility(View.VISIBLE);
+            listCompanyAddress.setText(company.getAddress());
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog.setMessage("Downloading companies...");
-            dialog.show();
+        if (company.getCityStateZip().isEmpty()) {
+            listCompanyCityStateZip.setVisibility(View.GONE);
+        } else {
+            listCompanyCityStateZip.setVisibility(View.VISIBLE);
+            listCompanyCityStateZip.setText(company.getCityStateZip());
         }
 
-        @Override
-        protected Company doInBackground(String... params) {
-            Company company = new Company();
-            HttpURLConnection conn = null;
-            try {
-                URL u = new URL(params[0]);
+        if (company.getWebsite().isEmpty()) {
+            listCompanyWebsite.setVisibility(View.GONE);
+        } else {
+            listCompanyWebsite.setVisibility(View.VISIBLE);
+            listCompanyWebsite.setText(company.getWebsite());
+        }
 
-                conn = (HttpURLConnection) u.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))");
-                conn.connect();
+        if (company.getPhone().isEmpty()) {
+            listCompanyPhone.setVisibility(View.GONE);
+        } else {
+            listCompanyPhone.setVisibility(View.VISIBLE);
+            listCompanyPhone.setText(company.getPhone());
+        }
 
-                BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(conn.getInputStream()));
+        if (company.getDescription().isEmpty()) {
+            listCompanyOverviewGroup.setVisibility(View.GONE);
+        } else {
+            listCompanyOverviewGroup.setVisibility(View.VISIBLE);
+            listCompanyNameOverview.setText(company.getDescription());
+        }
 
-                // Read the stream
-                String line = "";
-                String result = "";
-                while((line = bufferedReader.readLine()) != null)
-                    result += line;
+        if (company.getDescriptionMeta().isEmpty()) {
+            listCompanyDescriptionGroup.setVisibility(View.GONE);
+        } else {
+            listCompanyDescriptionGroup.setVisibility(View.VISIBLE);
+            listCompanyDescription.setText(company.getDescriptionMeta());
+        }
 
-                JSONObject obj = new JSONObject(result);
+        if (company.getEmployeesNo() + company.getFounded() + company.getRevenue() > 0) {
+            listCompanyBusinessInformationGroup.setVisibility(View.VISIBLE);
 
-                Log.i(LOG_TAG, "length JSON: " + Integer.toString(result.length()));
-                company.fromJson(obj);
-
-                return company;
-            } catch (MalformedURLException e) {
-                Log.e(LOG_TAG, "Error processing Top Companies API URL", e);
-                return company;
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error connecting to Top Companies API", e);
-
-                return company;
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "Error parsing to Top Companies API", e);
-
-                return company;
-            } finally {
-                if (conn != null) {
-                    conn.disconnect();
-                }
+            if (company.getFounded() > 0) {
+                listCompanyFoundedGroup.setVisibility(View.VISIBLE);
+                listCompanyFounded.setText(company.getFounded());
+            } else {
+                listCompanyFoundedGroup.setVisibility(View.GONE);
             }
+
+            if (company.getRevenue() > 0) {
+                listCompanyRevenueGroup.setVisibility(View.VISIBLE);
+                listCompanyRevenue.setText(company.getRevenue());
+            } else {
+                listCompanyRevenueGroup.setVisibility(View.GONE);
+            }
+
+            if (company.getEmployeesNo() > 0) {
+                listCompanyEmployeeGroup.setVisibility(View.VISIBLE);
+                listCompanyEmployee.setText(company.getEmployeesNo());
+            } else {
+                listCompanyEmployeeGroup.setVisibility(View.GONE);
+            }
+
+        } else {
+            listCompanyBusinessInformationGroup.setVisibility(View.GONE);
         }
+
+        listCompanyDetails.setVisibility(View.VISIBLE);
     }
 }

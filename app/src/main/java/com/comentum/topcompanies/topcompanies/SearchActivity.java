@@ -26,8 +26,10 @@ import java.util.ArrayList;
 
 public class SearchActivity extends Activity {
     private static final String LOG_TAG = "TopCompanies";
+    private static final String TAG = "SearchActivity";
     private final Api api = new Api();
     private ProgressBar loading;
+    private CompleteTextView autoCompView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +37,11 @@ public class SearchActivity extends Activity {
 
         setContentView(R.layout.activity_search);
 
-        final CompleteTextView autoCompView = (CompleteTextView) findViewById(R.id.keywordTxt);
-        //-- Auto focus with keyboard
-        autoCompView.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(autoCompView, InputMethodManager.SHOW_IMPLICIT);
+        autoCompView = (CompleteTextView) findViewById(R.id.keywordTxt);
+//        //-- Auto focus with keyboard
+//        autoCompView.requestFocus();
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.showSoftInput(autoCompView, InputMethodManager.SHOW_IMPLICIT);
 
         autoCompView.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.list_item));
         final Context context = getApplicationContext();
@@ -71,25 +73,59 @@ public class SearchActivity extends Activity {
                 SearchItem item = adapter.getSearchItem(i);
 
                 //-- Finish and animate
-                finish();
-                overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+//                finish();
+//                overridePendingTransition(R.anim.push_left_to_left, R.anim.push_right_to_left);
 
                 //-- start activity
                 JSONObject transport = new JSONObject();
-                try {
-                    transport.put("item", item.toJson());
-                    transport.put("typed", autoCompView.getTyped());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                Intent intent;
+                String payload;
+                if (item.getType() == SearchItem.ItemType.Category) {
+                    try {
+                        transport.put("item", item.toJson());
+                        transport.put("typed", autoCompView.getTyped());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    payload = transport.toString();
+                    intent = new Intent(SearchActivity.this, ListingActivity.class);
+                } else {
+                    try {
+                        transport.put("item", item.toJson());
+                        transport.put("typed", autoCompView.getTyped());
+                        transport.put("companies_id", item.getId());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    payload =  transport.toString();
+                    intent = new Intent(SearchActivity.this, CompanyActivity.class);
                 }
-                String payload = transport.toString();
-                Intent intent = new Intent(SearchActivity.this, ListingActivity.class);
                 intent.putExtra("payload", payload);
                 startActivity(intent);
-
-                //-- TODO detect company versus keyword result
+                Helper.animateForward(SearchActivity.this);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //-- Auto focus with keyboard
+        autoCompView.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(autoCompView, InputMethodManager.SHOW_IMPLICIT);
+
+        //-- Show the last results if still there
+        PlacesAutoCompleteAdapter adapter = (PlacesAutoCompleteAdapter) autoCompView.getAdapter();
+        String typed = autoCompView.getTyped();
+        if (typed != null && typed.length() > 2 && adapter.getCount() > 0) {
+            autoCompView.showDropDown();
+        }
     }
 
     private class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {

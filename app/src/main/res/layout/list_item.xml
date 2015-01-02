@@ -4,5 +4,5 @@
     android:layout_height="38dp"
     android:padding="10dp"
     android:text="Web Hosting"
-    android:background="#ffffffff"
-    android:textColor="#ff333333" />
+    android:background="@color/list_item_bg"
+    android:textColor="@color/list_item_txt" />

@@ -30,12 +30,13 @@ public class CompleteTextView extends AutoCompleteTextView {
         Log.i("onCommitCompletion label", completion.getLabel().toString());
     }
 
+    @Override
     public void replaceText(CharSequence text) {
-        typed = getText().toString();
-        super.replaceText(text);
+//        typed = getText().toString();
+//        super.replaceText(text);
     }
 
     public String getTyped() {
-        return typed;
+        return getText().toString();
     }
 }

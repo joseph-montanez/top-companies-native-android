@@ -160,13 +160,14 @@ public class CompanyActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        overridePendingTransition(R.anim.push_left_to_right, R.anim.push_right_to_left);
-        finish();
+        super.onBackPressed();
+        Helper.animateBack(this);
+//        finish();
 
-        Intent intent = this.getIntent();
-        intent.putExtra("payload", transport.toString());
-        intent.setClass(this, ListingActivity.class);
-        startActivity(intent);
+//        Intent intent = this.getIntent();
+//        intent.putExtra("payload", transport.toString());
+//        intent.setClass(this, ListingActivity.class);
+//        startActivity(intent);
     }
 
 

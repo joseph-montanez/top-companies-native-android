@@ -59,8 +59,8 @@ public class CompanyArrayAdapter extends ArrayAdapter<Company> {
                 Log.i("LIST_VIEW", "onItemSelected: " + c.name);
 
                 //-- Finish and animate
-                activity.finish();
-                activity.overridePendingTransition(R.anim.push_left_to_right, R.anim.push_right_to_left);
+//                activity.finish();
+//                activity.overridePendingTransition(R.anim.push_left_to_left, R.anim.push_right_to_right);
 
                 //-- start activity
                 JSONObject transport = activity.transport;
@@ -74,6 +74,7 @@ public class CompanyArrayAdapter extends ArrayAdapter<Company> {
                 Intent intent = new Intent(context, CompanyActivity.class);
                 intent.putExtra("payload", payload);
                 context.startActivity(intent);
+                Helper.animateForward(activity);
             }
         });
 

@@ -7,7 +7,7 @@
         android:layout_height="145dp"
         android:layout_gravity="center_horizontal"
         android:padding="16dp"
-        android:background="#ffffffff"
+        android:background="@color/list_item_bg"
         android:rowOrderPreserved="true"
         android:columnCount="2"
         android:rowCount="6"

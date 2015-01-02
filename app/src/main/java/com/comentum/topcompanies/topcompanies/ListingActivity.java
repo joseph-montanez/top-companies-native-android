@@ -43,13 +43,14 @@ public class ListingActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        finish();
-        overridePendingTransition(R.anim.push_down_in, R.anim.push_down_out);
+        super.onBackPressed();
+        Helper.animateBack(this);
 
-        Intent intent = this.getIntent();
-        intent.putExtra("payload", transport.toString());
-        intent.setClass(this, SearchActivity.class);
-        startActivity(intent);
+//
+//        Intent intent = this.getIntent();
+//        intent.putExtra("payload", transport.toString());
+//        intent.setClass(this, SearchActivity.class);
+//        startActivity(intent);
     }
 
     @Override

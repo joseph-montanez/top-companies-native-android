@@ -2,6 +2,7 @@ package com.comentum.topcompanies.topcompanies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +33,14 @@ public class CompanyArrayAdapter extends ArrayAdapter<Company> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        View v = convertView;
-        if (v == null) {
+        View v;
+        if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.list_company, null);
+        } else {
+            v = convertView;
         }
+
         Log.i("position", Integer.toString(position));
         final Company c = values.get(position);
         //listCompanyName
@@ -53,36 +56,15 @@ public class CompanyArrayAdapter extends ArrayAdapter<Company> {
         listCompanyPhone.setText(c.phone);
         listCompanyWebsite.setText(c.website);
 
-        v.setOnClickListener(new ViewGroup.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("LIST_VIEW", "onItemSelected: " + c.name);
-
-                //-- Finish and animate
-//                activity.finish();
-//                activity.overridePendingTransition(R.anim.push_left_to_left, R.anim.push_right_to_right);
-
-                //-- start activity
-                JSONObject transport = activity.transport;
-//                activity.transport
-                try {
-                    transport.put("companies_id", c.id);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                String payload =  transport.toString();
-                Intent intent = new Intent(context, CompanyActivity.class);
-                intent.putExtra("payload", payload);
-                context.startActivity(intent);
-                Helper.animateForward(activity);
-            }
-        });
-
         return v;
     }
 
     public List<Company> getItemList() {
         return values;
+    }
+
+    public Company getItemById(int i) {
+        return values.get(i);
     }
 
     public void setItemList(List<Company> itemList) {

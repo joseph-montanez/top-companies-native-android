@@ -21,6 +21,7 @@ import java.util.List;
  * Created by Joseph on 12/25/2014.
  */
 public class Api {
+//    enum ERRORS
     public Promise search(String value) {
         final DeferredObject deferred = new DeferredObject();
 
@@ -92,6 +93,63 @@ public class Api {
         });
 
         return deferred.promise();
+    }
+
+    public Promise listing(String keywordId) {
+        final DeferredObject deferred = new DeferredObject();
+
+        String apiUrl = "ajax-listing.php";
+        RequestParams params = new RequestParams();
+        params.add("keywords_id", keywordId);
+        params.add("companies", "true");
+
+        Promise result = null;
+        try {
+            result = Client.getJsonDeferred(apiUrl, params);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (result == null) {
+            deferred.reject(null);
+        }
+
+        result.done(new DoneCallback<JSONObject>() {
+            @Override
+            public void onDone(JSONObject response) {
+                if (response.has("companies")) {
+                    JSONArray items = response.optJSONArray("companies");
+                    if (items != null) {
+                        ArrayList<Company> searchItems = itemsToCompanies(items);
+                        deferred.resolve(searchItems);
+                    } else {
+                        deferred.reject(null);
+                    }
+                } else {
+                    deferred.reject(null);
+                }
+            }
+        });
+
+        result.fail(new FailCallback() {
+            @Override
+            public void onFail(Object result) {
+                deferred.reject(null);
+            }
+        });
+
+        return deferred.promise();
+    }
+
+    private ArrayList<Company> itemsToCompanies(JSONArray items) {
+        ArrayList<Company> companies = new ArrayList<Company>();
+        for (int i=0; i < items.length(); i++) {
+            Company company = new Company();
+            company.fromJson(items.optJSONObject(i));
+            companies.add(company);
+        }
+
+        return companies;
     }
 
     private ArrayList<SearchItem> itemsToSearchItems(JSONArray items) {

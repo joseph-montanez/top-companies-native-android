@@ -42,6 +42,10 @@ public class Client {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Client", "onSuccess - JSONObject");
+                if (response != null) {
+                    Log.d("JSONObject", response.toString());
+                }
+
 
                 deferred.resolve(response);
 //                // If the response is JSONObject instead of expected JSONArray

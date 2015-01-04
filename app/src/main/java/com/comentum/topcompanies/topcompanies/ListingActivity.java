@@ -1,61 +1,52 @@
 package com.comentum.topcompanies.topcompanies;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.json.JSONArray;
+import com.comentum.topcompanies.topcompanies.Api.Api;
+
+import org.jdeferred.DoneCallback;
+import org.jdeferred.Promise;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class ListingActivity extends Activity {
     private static final String LOG_TAG = "TopCompanies";
+    private static final String TAG = "ListingActivity";
+    private static final String LIST_STATE_KEY = "LIST_STATE_KEY";
+    private static final String LIST_POSITION_KEY = "LIST_POSITION_KEY";
+    private static final String ITEM_POSITION_KEY = "ITEM_POSITION_KEY";
     public JSONObject transport;
     public CompanyArrayAdapter adapter;
     public ListView listView;
+    private Parcelable mListState = null;
+    private Integer mListPosition = null;
+    private Integer mItemPosition = null;
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         Helper.animateBack(this);
-
-//
-//        Intent intent = this.getIntent();
-//        intent.putExtra("payload", transport.toString());
-//        intent.setClass(this, SearchActivity.class);
-//        startActivity(intent);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_listing);
 
         final TextView listHeading = (TextView) findViewById(R.id.listHeading);
@@ -63,41 +54,53 @@ public class ListingActivity extends Activity {
         String payload = extras.getString("payload");
         Log.i("payload", payload);
 
-        final ImageView backButton = (ImageView) findViewById(R.id.listViewBackButton);
-        backButton.setOnClickListener(new ImageView.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        Helper.setUpBackButton(this);
 
         listView = (ListView) findViewById(R.id.listview);
         adapter = new CompanyArrayAdapter(this, this, new ArrayList<Company>());
         listView.setAdapter(adapter);
-        listView.setOnItemSelectedListener(new ListView.OnItemSelectedListener() {
-
+        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int i, long id) {
-                final String item = (String) parent.getItemAtPosition(i);
-                Log.i(LOG_TAG, "onItemSelected: " + item);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CompanyArrayAdapter adapter = (CompanyArrayAdapter) parent.getAdapter();
+                Company company = adapter.getItemById(position);
+//                final String item = (String) parent.getItemAtPosition(position);
+                Log.i(TAG, "onItemClick: " + company.getName());
 
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                //-- Call save instance before moving on
+//                Bundle state = new Bundle();
+//                activity.onSaveInstanceState(state);
+
+                //-- start activity
+                ListingActivity activity = ListingActivity.this;
+                JSONObject transport = activity.transport;
+                try {
+                    transport.put("companies_id", company.getId());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String payload = transport.toString();
+                Intent intent = new Intent(activity, CompanyActivity.class);
+                intent.putExtra("payload", payload);
+                activity.startActivity(intent);
+                Helper.animateForward(activity);
 
             }
         });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                final String item = (String) adapterView.getItemAtPosition(i);
-                Log.i(LOG_TAG, "OnItemClickListener: " + item);
-            }
-        });
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//                final String item = (String) adapterView.getItemAtPosition(i);
+//                Log.i(LOG_TAG, "OnItemClickListener: " + item);
+//            }
+//        });
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
         // Exec async load task
+        final ProgressDialog dialog = new ProgressDialog(ListingActivity.this);
+        dialog.setMessage("Downloading companies...");
+        dialog.show();
 
         try {
             transport = new JSONObject(payload);
@@ -107,12 +110,18 @@ public class ListingActivity extends Activity {
                 item.fromJson(jsonItem);
             }
             listHeading.setText(item.getName());
-            StringBuilder sb = new StringBuilder("http://hawk2.comentum.com/topcompanies/app-api/ajax-listing.php");
-            sb.append("?companies=true");
-            sb.append("&keywords_id=" + URLEncoder.encode(item.getId(), "utf8"));
-            (new AsyncListViewLoader()).execute(sb.toString());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Api api = new Api();
+            Promise listing = api.listing(item.getId());
+            listing.then(new DoneCallback<ArrayList<Company>>() {
+                @Override
+                public void onDone(ArrayList<Company> result) {
+                    dialog.dismiss();
+
+                    adapter = new CompanyArrayAdapter(ListingActivity.this, ListingActivity.this, result);
+                    listView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                }
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -136,83 +145,20 @@ public class ListingActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
-    private class AsyncListViewLoader extends AsyncTask<String, Void, List<Company>> {
-        private final ProgressDialog dialog = new ProgressDialog(ListingActivity.this);
-
-        @Override
-        protected void onPostExecute(final List<Company> result) {
-            Log.i(LOG_TAG, "onPostExecute: " + Integer.toString(result.size()));
-            super.onPostExecute(result);
-            dialog.dismiss();
-
-            adapter = new CompanyArrayAdapter(ListingActivity.this, ListingActivity.this, result);
-            listView.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            dialog.setMessage("Downloading companies...");
-            dialog.show();
-        }
-
-        @Override
-        protected List<Company> doInBackground(String... params) {
-            List<Company> resultList = new ArrayList<Company>();
-            HttpURLConnection conn = null;
-            try {
-                URL u = new URL(params[0]);
-
-                conn = (HttpURLConnection) u.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; MSIE 9.0; WIndows NT 9.0; en-US))");
-                conn.connect();
-
-                BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(conn.getInputStream()));
-
-                // Read the stream
-                String line = "";
-                String result = "";
-                while((line = bufferedReader.readLine()) != null)
-                    result += line;
-
-                JSONObject obj = new JSONObject(result);
-                JSONArray companies = obj.getJSONArray("companies");
-
-                Log.i(LOG_TAG, "length JSON: " + Integer.toString(result.length()));
-                Log.i(LOG_TAG, "Number of companies: " + Integer.toString(companies.length()));
-                for (int i=0; i < companies.length(); i++) {
-                    Company company = new Company();
-                    company.fromJson(companies.getJSONObject(i));
-                    resultList.add(company);
-                }
-
-                return resultList;
-            } catch (MalformedURLException e) {
-                Log.e(LOG_TAG, "Error processing Top Companies API URL", e);
-                return resultList;
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error connecting to Top Companies API", e);
-
-                return resultList;
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, "Error parsing to Top Companies API", e);
-
-                return resultList;
-            } finally {
-                if (conn != null) {
-                    conn.disconnect();
-                }
-            }
-        }
-    }
 
     @Override
      public void onResume() {
         super.onResume();
         Log.i(LOG_TAG, "onResume");
+        if (mListState != null) {
+            getListView().onRestoreInstanceState(mListState);
+        }
+        if (mListPosition != null && mItemPosition != null) {
+            listView.setSelectionFromTop(mListPosition, mItemPosition);
+        }
+        mListState = null;
+        mListPosition = null;
+        mItemPosition = null;
 //        adapter.setItemList(dbHelper.getItems());
     }
 
@@ -220,5 +166,35 @@ public class ListingActivity extends Activity {
     public void onPause() {
         super.onPause();
         adapter.notifyDataSetInvalidated();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        Log.i(LOG_TAG, "onSaveInstanceState");
+        mListState = getListView().onSaveInstanceState();
+        state.putParcelable(LIST_STATE_KEY, mListState);
+
+        // Save position of first visible item
+        mListPosition = listView.getFirstVisiblePosition();
+        state.putInt(LIST_POSITION_KEY, mListPosition);
+
+        // Save scroll position of item
+        View itemView = listView.getChildAt(0);
+        mItemPosition = itemView == null ? 0 : itemView.getTop();
+        state.putInt(ITEM_POSITION_KEY, mItemPosition);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle state) {
+        super.onRestoreInstanceState(state);
+        Log.i(LOG_TAG, "onRestoreInstanceState");
+        mListState = state.getParcelable(LIST_STATE_KEY);
+        mListPosition = state.getInt(LIST_POSITION_KEY);
+        mItemPosition = state.getInt(ITEM_POSITION_KEY);
+    }
+
+    public ListView getListView() {
+        return listView;
     }
 }

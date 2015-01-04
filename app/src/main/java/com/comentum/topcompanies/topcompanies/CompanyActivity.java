@@ -111,13 +111,7 @@ public class CompanyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_company);
 
-        final ImageView backButton = (ImageView) findViewById(R.id.listViewBackButton);
-        backButton.setOnClickListener(new ImageView.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
+        Helper.setUpBackButton(this);
 
 
         final TextView listHeading = (TextView) findViewById(R.id.listHeading);

@@ -38,6 +38,9 @@ public class Company {
     }
 
     public void fromJson(JSONObject obj) {
+        if (obj == null) {
+            return;
+        }
         /*
         {
           "companies_id": 1176,

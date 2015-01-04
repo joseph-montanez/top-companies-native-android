@@ -27,7 +27,9 @@ public class CompleteTextView extends AutoCompleteTextView {
     @Override
     public void onCommitCompletion(CompletionInfo completion) {
         Log.i("onCommitCompletion text", completion.getText().toString());
-        Log.i("onCommitCompletion label", completion.getLabel().toString());
+        if (completion.getLabel() != null) {
+            Log.i("onCommitCompletion label", completion.getLabel().toString());
+        }
     }
 
     @Override

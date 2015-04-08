@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -72,39 +73,43 @@ public class SearchActivity extends Activity {
                 PlacesAutoCompleteAdapter adapter = (PlacesAutoCompleteAdapter) adapterView.getAdapter();
                 SearchItem item = adapter.getSearchItem(i);
 
-                //-- Finish and animate
-//                finish();
-//                overridePendingTransition(R.anim.push_left_to_left, R.anim.push_right_to_left);
-
-                //-- start activity
-                JSONObject transport = new JSONObject();
-                Intent intent;
-                String payload;
-                if (item.getType() == SearchItem.ItemType.Category) {
-                    try {
-                        transport.put("item", item.toJson());
-                        transport.put("typed", autoCompView.getTyped());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    payload = transport.toString();
-                    intent = new Intent(SearchActivity.this, ListingActivity.class);
-                } else {
-                    try {
-                        transport.put("item", item.toJson());
-                        transport.put("typed", autoCompView.getTyped());
-                        transport.put("companies_id", item.getId());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    payload =  transport.toString();
-                    intent = new Intent(SearchActivity.this, CompanyActivity.class);
-                }
-                intent.putExtra("payload", payload);
-                startActivity(intent);
-                Helper.animateForward(SearchActivity.this);
+                navigate(item);
             }
         });
+    }
+
+    public void navigate(SearchItem item) {
+        //-- Dismiss the keyboard
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(autoCompView.getWindowToken(), 0);
+
+        //-- start activity
+        JSONObject transport = new JSONObject();
+        Intent intent;
+        String payload;
+        if (item.getType() == SearchItem.ItemType.Category) {
+            try {
+                transport.put("item", item.toJson());
+                transport.put("typed", autoCompView.getTyped());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            payload = transport.toString();
+            intent = new Intent(SearchActivity.this, ListingActivity.class);
+        } else {
+            try {
+                transport.put("item", item.toJson());
+                transport.put("typed", autoCompView.getTyped());
+                transport.put("companies_id", item.getId());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            payload =  transport.toString();
+            intent = new Intent(SearchActivity.this, CompanyActivity.class);
+        }
+        intent.putExtra("payload", payload);
+        startActivity(intent);
+        Helper.animateForward(SearchActivity.this);
     }
 
     @Override
@@ -128,7 +133,7 @@ public class SearchActivity extends Activity {
         }
     }
 
-    private class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
+    public class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable, CompleteTextView.AutoCompleteCommunication {
         private ArrayList<SearchItem> resultList;
 
         public PlacesAutoCompleteAdapter(Context context, int textViewResourceId) {
@@ -197,6 +202,16 @@ public class SearchActivity extends Activity {
                     }
                 }};
             return filter;
+        }
+
+        @Override
+        public void selected(CompletionInfo completion) {
+            final SearchItem item = resultList.get((int) completion.getId());
+            SearchActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    navigate(item);
+                }
+            });
         }
     }
 
